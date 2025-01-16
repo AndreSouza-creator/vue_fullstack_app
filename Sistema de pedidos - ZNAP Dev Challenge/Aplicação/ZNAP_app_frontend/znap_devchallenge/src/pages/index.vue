@@ -2,7 +2,7 @@
   <v-app-bar id="navbar" scroll-behavior="elevate">
     <template v-slot:prepend>
     <v-app-bar-nav-icon>
-      <!-- <img id="navlogo" src="../assets/imgs/znaplogo.webp"> -->
+      <img id="navlogo" src="../assets/imgs/znaplogo.webp">
     </v-app-bar-nav-icon>
   </template>
   </v-app-bar>

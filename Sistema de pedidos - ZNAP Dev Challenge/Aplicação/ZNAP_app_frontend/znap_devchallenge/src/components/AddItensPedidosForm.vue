@@ -17,13 +17,6 @@
             label="Selecione o Cliente">
           </v-select>
         </v-col>
-        <v-col>
-      <!--     <v-select 
-            v-model="newDemand.id_produto" 
-            :items="proddata.map((prod) => prod.nome)"
-            label="Selecione o produto">
-          </v-select> -->
-        </v-col>
       </v-row>
 
       <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
@@ -100,7 +93,7 @@ export default {
     },
     saveDemand() {
       this.products.push({ ...this.newDemand });
-      this.newDemand = { id_pedido: '', data: '', descricao: '', id_cliente: null, nome_cliente: '' };
+      this.newDemand = { id_pedido: '', data: '', descricao: '', id_cliente: null };
       this.$refs.form.reset();
       this.confirmDialog = false;
 
@@ -111,8 +104,6 @@ export default {
     return `${year}-${month}-${day}`; // Retorna no formato YYYY-MM-DD
   },
 
-
-
   //REQUISICAO
   async sendDataToServer(pedido) {
     try {
@@ -120,10 +111,8 @@ export default {
       const response = await apiURL.post('/pedidos/addpedido', {
         id_cliente: pedido.id_cliente,
         data: formattedDate,
-        descricao: pedido.descricao,
-        nome_cliente: pedido.nome_cliente
+        descricao: pedido.descricao
       });
-      console.log("OPAYLOAD",pedido);
       alert('Pedido criado com sucesso!');
     } catch (error) {
       console.error(error.response.data);
@@ -153,8 +142,3 @@ export default {
   }
 };
 </script>
-<style lang="css" scoped>
-.v-row{
-  flex-direction: column;
-}
-</style>

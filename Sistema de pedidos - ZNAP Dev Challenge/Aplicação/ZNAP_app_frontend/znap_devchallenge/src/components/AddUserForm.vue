@@ -25,9 +25,11 @@
             variant="outlined"
           ></v-text-field>
         </v-col>
+        <v-col cols="12" md="6">
         <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
           Adicionar Usuário
         </v-btn>
+      </v-col>
       </v-row>
       
     </v-form>

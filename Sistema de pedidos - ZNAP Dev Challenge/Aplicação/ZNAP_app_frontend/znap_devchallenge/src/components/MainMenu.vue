@@ -20,13 +20,16 @@
             <p v-else>Carregando dados...</p>
           </v-tabs-window-item>
           <v-tabs-window-item value="pedidos">
-            <h1 class="bigTitle">📦 Gerenciar Pedidos</h1>
+            <h1 class="bigTitle">📦 Gerenciar pedidos da organização</h1>
+            <v-divider></v-divider>
             <br/>
             <h2>Adicionar novo pedido</h2>
+            
             <AddPedidosForm v-if="udata.length" :udata="udata"/>
             <br/>
+            <v-divider></v-divider>
             <h2>Editar e excluir pedidos</h2>
-            <ViewPedidosTable v-if="pedidodata && pedidodata.length" :pedidodata="pedidodata" :udata="udata"/>
+            <ViewPedidosTable v-if="pedidodata && pedidodata.length" :pedidodata="pedidodata" :udata="udata" :proddata="proddata"/>
             <p v-else>Carregando dados...</p>
           </v-tabs-window-item>
           <v-tabs-window-item value="produtos">
@@ -58,68 +61,78 @@ onMounted(() => {
 });
 
   export default {
-    components: {
-      ViewUsersTable,
-      ViewProductsTable,
-      ViewPedidosTable
-    },
-    
-    data() {
-  return {
-    tab: null,
-    udata: [],
-    proddata: [],
-    pedidodata: [],
-  };
-    },
-    methods: {
-      async fetchUserData() {
-        try {
-          const response = await apiURL.get('/');
-          if (response.status === 200) {
-            this.udata = response.data;
-            console.log("FUNÇÃO GETUSERS EXECUTADA", this.udata);
-          } else {
-            alert("Error fetching data");
-          }
-        } catch (error) {
-          console.log(error);
+  components: {
+    ViewUsersTable,
+    ViewProductsTable,
+    ViewPedidosTable,
+  },
+
+  data() {
+    return {
+      tab: null, // Aba selecionada
+      udata: [],
+      proddata: [],
+      pedidodata: [],
+    };
+  },
+
+  methods: {
+    async fetchUserData() {
+      try {
+        const response = await apiURL.get('/');
+        if (response.status === 200) {
+          this.udata = response.data;
+        } else {
+          alert("Error fetching data");
         }
-      },
-      async fetchProdutosData() {
-        try {
-          const response = await apiURL.get('/produtos/getprodutos');
-          if (response.status === 200) {
-            this.proddata = response.data;
-            console.log("proddata", this.proddata)
-          } else {
-            alert("Error fetching data");
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      },
-      async fetchPedidosData() {
-        try {
-          const response = await apiURL.get('/pedidos/getpedidos');
-          if (response.status === 200) {
-            console.log("Pedidos response!!", response);
-            this.pedidodata = response.data;
-            console.log("pedidodata", this.pedidodata)
-          } else {
-            alert("Error fetching data");
-          }
-        } catch (error) {
-          console.log(error);
-        }
-      },
+      } catch (error) {
+        console.log(error);
+      }
     },
-    mounted() {
-      this.fetchUserData();
-      this.fetchProdutosData();
-      this.fetchPedidosData();
+    async fetchProdutosData() {
+      try {
+        const response = await apiURL.get('/produtos/getprodutos');
+        if (response.status === 200) {
+          this.proddata = response.data;
+        } else {
+          alert("Error fetching data");
+        }
+      } catch (error) {
+        console.log(error);
+      }
     },
-  };
+    async fetchPedidosData() {
+      try {
+        const response = await apiURL.get('/pedidos/getpedidos');
+        if (response.status === 200) {
+          this.pedidodata = response.data;
+        } else {
+          alert("Error fetching data");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+
+  watch: {
+    // Sempre que a aba mudar, salva o valor no localStorage
+    tab(newTab) {
+      localStorage.setItem('selectedTab', newTab);
+    },
+  },
+
+  mounted() {
+    // Recupera o estado da aba ao carregar o componente
+    const savedTab = localStorage.getItem('selectedTab');
+    this.tab = savedTab || 'clientes'; // Define a aba padrão como 'clientes'
+
+    // Chama as funções para buscar os dados
+    this.fetchUserData();
+    this.fetchProdutosData();
+    this.fetchPedidosData();
+  },
+};
   </script>
 <style scoped>
      @media(min-width: 1000px){
