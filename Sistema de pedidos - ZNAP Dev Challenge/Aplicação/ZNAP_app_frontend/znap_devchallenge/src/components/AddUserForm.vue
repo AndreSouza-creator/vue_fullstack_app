@@ -1,5 +1,5 @@
 <template>
-  <v-container class="mt-5">
+  <v-container class="containerAddForm">
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
         <v-col cols="12" md="6">
@@ -8,22 +8,28 @@
             label="Nome"
             :rules="[rules.required]"
             required
-            class="custom-input"
+            rounded 
+            class="shrink"
+            variant="outlined"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
             v-model="newUser.email"
             label="Email"
+            dense
             :rules="[rules.required, rules.email]"
             required
-            class="custom-input"
+            rounded
+            class="shrink"
+            variant="outlined"
           ></v-text-field>
         </v-col>
+        <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
+          Adicionar Usuário
+        </v-btn>
       </v-row>
-      <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
-        Adicionar Usuário
-      </v-btn>
+      
     </v-form>
 
     <!-- Modal de Confirmação -->
@@ -90,7 +96,6 @@ export default {
         const response = await apiURL.post('/addcustomer', user);
         console.log(response.data);
         alert('Cliente criado com sucesso!');
-        fetchUserData();
       } catch (error) {
         console.error(error);
       }
@@ -100,12 +105,16 @@ export default {
 </script>
 
 <style scoped>
-.v-container {
-  max-width: 90%;
-  margin: auto;
+
+@media(min-width: 1000px){
+  .containerAddForm {
+    width: 50%;
+    margin-left: 0px;
+
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
 }
 
-.custom-input {
-  width: 100%;
 }
 </style>

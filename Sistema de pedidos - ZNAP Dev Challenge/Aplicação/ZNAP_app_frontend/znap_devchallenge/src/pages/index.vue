@@ -1,12 +1,13 @@
 <template>
-  <v-app-bar  color="#333" scroll-behavior="elevate">
+  <v-app-bar id="navbar" scroll-behavior="elevate">
     <template v-slot:prepend>
-   <!--  <v-app-bar-nav-icon>logo</v-app-bar-nav-icon> -->
+    <v-app-bar-nav-icon>
+      <!-- <img id="navlogo" src="../assets/imgs/znaplogo.webp"> -->
+    </v-app-bar-nav-icon>
   </template>
-    <v-app-bar-title>Painel de administração</v-app-bar-title>
   </v-app-bar>
   <v-container>
-    <h2>Olá, bem vindo!</h2> 
+    <h1>Olá, bem vindo!</h1> 
     <p>Selecione um item para administrar</p>
     <br/>
     <v-divider/>
@@ -18,3 +19,26 @@
 <script setup>
 
 </script>
+
+<style lang="css" scoped>
+     #navbar{
+      background-color: rgb(30, 31, 31);
+      color: white;
+      height: 60px;
+      display: flex;
+     }
+
+     #navlogo{
+      width: 82px;
+      padding: 0px;
+      margin-left: 100%;
+     }
+
+     .v-col {
+    flex-basis: 0;
+    flex-grow: 1;
+    min-width: 100%;
+}  
+
+
+</style>

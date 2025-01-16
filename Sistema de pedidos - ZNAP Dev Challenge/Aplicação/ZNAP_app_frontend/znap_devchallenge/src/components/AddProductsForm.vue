@@ -1,29 +1,35 @@
 <template>
-  <v-container class="mt-5">
+  <v-container class="containerAddForm">
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
         <v-col cols="12" md="6">
           <v-text-field
             v-model="newUser.nome"
-            label="Nome"
+            label="Nome do produto"
             :rules="[rules.required]"
             required
-            class="custom-input"
+            rounded 
+            class="shrink"
+            variant="outlined"
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="newUser.preco"
+            v-model="newUser.email"
             label="Preco"
-            :rules="[rules.required, rules.preco]"
+            dense
+            :rules="[rules.required, rules.email]"
             required
-            class="custom-input"
+            rounded
+            class="shrink"
+            variant="outlined"
           ></v-text-field>
         </v-col>
-      </v-row>
+    
       <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
-        Adicionar Usuário
+        Adicionar Produto
       </v-btn>
+    </v-row>
     </v-form>
 
     <!-- Modal de Confirmação -->
@@ -110,12 +116,17 @@ export default {
 </script>
 
 <style scoped>
-.v-container {
-  max-width: 90%;
-  margin: auto;
+
+@media(min-width: 1000px){
+  .containerAddForm {
+    width: 50%;
+    margin-left: 0px;
+
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
 }
 
-.custom-input {
-  width: 100%;
 }
+
 </style>

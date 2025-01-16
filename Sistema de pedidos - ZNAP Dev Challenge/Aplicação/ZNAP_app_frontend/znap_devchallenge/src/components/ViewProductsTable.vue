@@ -139,9 +139,7 @@ export default {
       } catch (error) {
         console.log("Erro na requisição de exclusão", error);
       }
-    },
-
-    
+    },    
 
     async save() {
       try {

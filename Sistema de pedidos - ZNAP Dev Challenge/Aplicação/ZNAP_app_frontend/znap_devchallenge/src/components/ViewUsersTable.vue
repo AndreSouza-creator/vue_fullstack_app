@@ -1,20 +1,18 @@
 <template>
-  <v-data-table
-    :headers="headers"
-    :items="udata">
+  <v-data-table :headers="headers" :items="udata">
     <template v-slot:top>
       <v-dialog v-model="dialog" max-width="500px">
         <v-card>
           <v-card-text>
             <v-container>
-                 <h1>Editar cliente</h1>
-                <v-col cols="12" >
-                  <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
-                </v-col>
-                <v-col cols="12" >
-                  <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
-                </v-col>
-              
+              <h1>Editar cliente</h1>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
+              </v-col>
+
             </v-container>
           </v-card-text>
 
@@ -83,34 +81,39 @@ export default {
   }),
 
   computed: {
-    formTitle () {
+    formTitle() {
       return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item';
     }
   },
 
   watch: {
-    dialog (val) {
+    dialog(val) {
       val || this.close();
     },
-    dialogDelete (val) {
+    dialogDelete(val) {
       val || this.closeDelete();
     }
   },
 
+  mounted() {
+    console.log("componente montou")
+  },
+
   methods: {
-    editItem (item) {
+
+    editItem(item) {
       this.editedIndex = this.udata.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialog = true;
     },
 
-    deleteItem (item) {
+    deleteItem(item) {
       this.editedIndex = this.udata.indexOf(item);
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
 
-    async deleteItemConfirm () {
+    async deleteItemConfirm() {
       try {
         const response = await apiURL.delete(`/deletecustomer/${this.editedItem.id_cliente}`);
         if (response.status === 200) {
@@ -120,12 +123,12 @@ export default {
           alert("Erro ao excluir o cliente.");
         }
       } catch (error) {
-        console.log("Erro na requisição de exclusão", error);
+        console.error("Erro na requisição de exclusão", error);
         alert("Erro ao excluir o cliente.");
       }
     },
 
-    close () {
+    close() {
       this.dialog = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
@@ -133,7 +136,7 @@ export default {
       });
     },
 
-    closeDelete () {
+    closeDelete() {
       this.dialogDelete = false;
       this.$nextTick(() => {
         this.editedItem = Object.assign({}, this.defaultItem);
@@ -143,36 +146,31 @@ export default {
 
     async save() {
       try {
-        const endpoint = "/editcustomer";
+        const endpoint = this.editedIndex > -1 ? '/editcustomer' : '/addcustomer';
         const payload = {
           nome: this.editedItem.nome,
           email: this.editedItem.email,
           id_cliente: this.editedItem.id_cliente
         };
 
-        if (this.editedIndex > -1) {
-          // Atualizando um cliente existente
-          const response = await apiURL.put(endpoint, payload);
-          if (response.status === 200) {
-            Object.assign(this.udata[this.editedIndex], this.editedItem);
+        const response = this.editedIndex > -1 ?
+          await apiURL.put(`${endpoint}/${this.editedItem.id_cliente}`, payload) :
+          await apiURL.post(endpoint, payload);
+
+        if (response.status === 200) {
+          if (this.editedIndex > -1) {
+            Object.assign(this.udata[this.editedIndex], response.data); // Atualiza o item editado
             alert("Usuário atualizado com sucesso.");
-            this.close();
           } else {
-            alert("Erro ao atualizar o cliente.");
-          }
-        } else {
-          // Adicionando um novo cliente (presume-se que o endpoint de adição seja diferente, ajustar conforme necessário)
-          const response = await apiURL.post('/addcustomer', payload);
-          if (response.status === 200) {
-            this.udata.push(response.data);
+            this.udata.push(response.data); // Adiciona novo item
             alert("Usuário adicionado com sucesso.");
-            this.close();
-          } else {
-            alert("Erro ao adicionar o cliente.");
           }
+          this.close();
+        } else {
+          alert("Erro ao salvar o cliente.");
         }
       } catch (error) {
-        console.log("Erro na requisição de salvamento", error);
+        console.error("Erro na requisição de salvamento", error);
         alert("Erro ao salvar o cliente.");
       }
     }
