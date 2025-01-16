@@ -7,17 +7,14 @@
         <v-card>
           <v-card-text>
             <v-container>
-              <v-row>
-                <v-col cols="12" md="4" sm="6">
+                 <h1>Editar cliente</h1>
+                <v-col cols="12" >
                   <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
                 </v-col>
-                <v-col cols="12" md="4" sm="6">
+                <v-col cols="12" >
                   <v-text-field v-model="editedItem.email" label="Email"></v-text-field>
                 </v-col>
-                <v-col cols="12" md="4" sm="6">
-                  <v-text-field v-model="editedItem.id_cliente" label="ID Cliente"></v-text-field>
-                </v-col>
-              </v-row>
+              
             </v-container>
           </v-card-text>
 
@@ -113,24 +110,20 @@ export default {
       this.dialogDelete = true;
     },
 
-    // Alterado para enviar a requisição de DELETE
     async deleteItemConfirm () {
-  try {
-    // Usando o método DELETE para a requisição
-    const response = await apiURL.delete(`/deletecustomer/${this.editedItem.id_cliente}`);
-    
-    if (response.status === 200) {
-      // Se a exclusão for bem-sucedida, remove o item localmente
-      this.udata.splice(this.editedIndex, 1);
-      this.closeDelete();
-    } else {
-      alert("Erro ao excluir o cliente.");
-    }
-  } catch (error) {
-    console.log("Erro na requisição de exclusão", error);
-    alert("Erro ao excluir o cliente.");
-  }
-},
+      try {
+        const response = await apiURL.delete(`/deletecustomer/${this.editedItem.id_cliente}`);
+        if (response.status === 200) {
+          this.udata.splice(this.editedIndex, 1);
+          this.closeDelete();
+        } else {
+          alert("Erro ao excluir o cliente.");
+        }
+      } catch (error) {
+        console.log("Erro na requisição de exclusão", error);
+        alert("Erro ao excluir o cliente.");
+      }
+    },
 
     close () {
       this.dialog = false;
@@ -148,39 +141,40 @@ export default {
       });
     },
 
-    close () {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
+    async save() {
+      try {
+        const endpoint = "/editcustomer";
+        const payload = {
+          nome: this.editedItem.nome,
+          email: this.editedItem.email,
+          id_cliente: this.editedItem.id_cliente
+        };
 
-    async editItemConfirm () {
-  try {
-    // Usando o método DELETE para a requisição
-    const response = await apiURL.post(`/editcustomer/${this.editedItem.id_cliente}`);
-    
-    if (response.status === 200) {
-      // Se a exclusão for bem-sucedida, remove o item localmente
-      this.udata.splice(this.editedIndex, 1);
-      this.closeEdit();
-    } else {
-      alert("Erro ao excluir o cliente.");
-    }
-  } catch (error) {
-    console.log("Erro na requisição de exclusão", error);
-    alert("Erro ao excluir o cliente.");
-  }
-},
-
-    save () {
-      if (this.editedIndex > -1) {
-        Object.assign(this.udata[this.editedIndex], this.editedItem);
-      } else {
-        this.udata.push(this.editedItem);
+        if (this.editedIndex > -1) {
+          // Atualizando um cliente existente
+          const response = await apiURL.put(endpoint, payload);
+          if (response.status === 200) {
+            Object.assign(this.udata[this.editedIndex], this.editedItem);
+            alert("Usuário atualizado com sucesso.");
+            this.close();
+          } else {
+            alert("Erro ao atualizar o cliente.");
+          }
+        } else {
+          // Adicionando um novo cliente (presume-se que o endpoint de adição seja diferente, ajustar conforme necessário)
+          const response = await apiURL.post('/addcustomer', payload);
+          if (response.status === 200) {
+            this.udata.push(response.data);
+            alert("Usuário adicionado com sucesso.");
+            this.close();
+          } else {
+            alert("Erro ao adicionar o cliente.");
+          }
+        }
+      } catch (error) {
+        console.log("Erro na requisição de salvamento", error);
+        alert("Erro ao salvar o cliente.");
       }
-      this.close();
     }
   }
 };

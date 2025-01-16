@@ -7,7 +7,7 @@ import { deleteProduct } from "../controller/productscontroller.js"
 const productRoutes = express.Router()
 productRoutes.get("/getprodutos", getProdutos)
 productRoutes.post("/addproduct", addProduct)
-productRoutes.post("/editproduct", updateProduct)
-productRoutes.post("/deleteproduct", deleteProduct)
+productRoutes.put("/editproduct", updateProduct)
+productRoutes.delete("/deleteproduct/:id", deleteProduct)
 
 export default productRoutes

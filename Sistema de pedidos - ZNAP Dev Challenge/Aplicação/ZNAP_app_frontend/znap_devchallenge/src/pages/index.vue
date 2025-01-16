@@ -12,7 +12,6 @@
     <v-divider/>
     <br/>
     <MainMenu/>
-    <!-- Verificação para garantir que `udata` não é null -->
   </v-container>
 </template>
 

@@ -24,27 +24,33 @@ export const addProduct = (req , res) => {
 }
 
 export const updateProduct = (req, res) => {
-    const q =
-      "UPDATE produtos SET `nome` = ?, `email` = ? WHERE `id_cliente` = ?";
-  
-    const values = [
-      req.body.nome,
-      req.body.preco,
-    ];
-  
-    db.query(q, [...values, req.params.id], (err) => {
-      if (err) return res.json(err);
-  
-      return res.status(200).json("Produto atualizado com sucesso.");
-    });
-  };
+  const query =
+    "UPDATE produtos SET `nome` = ?, `preco` = ? WHERE `id_produto` = ?";
 
-  export const deleteProduct = (req, res) => {
-    const q = "DELETE FROM produtos WHERE `id` = ?";
+  const values = [
+    req.body.nome,
+    req.body.preco,
+    req.body.id_produto // O ID deve vir do corpo da requisição
+  ];
+
+  db.query(query, values, (err) => {
+    if (err) return res.json(err);
+
+    return res.status(200).json("Produto atualizado com sucesso.");
+  });
+};
+
+
+export const deleteProduct = (req, res) => {
+      
+  const query = "DELETE FROM produtos WHERE `id_produto` = ?";
   
-    db.query(q, [req.params.id], (err) => {
-      if (err) return res.json(err);
-  
-      return res.status(200).json("Produto deletado com sucesso.");
-    });
-  };
+  db.query(query, [req.params.id], (err, result) => { 
+    if (err) {
+      return res.status(500).json(err);     }
+    if (result.affectedRows === 0) {
+      return res.status(404).json("Produto não encontrado.");
+    }
+    return res.status(200).json("Produto deletado com sucesso.");
+  });
+};

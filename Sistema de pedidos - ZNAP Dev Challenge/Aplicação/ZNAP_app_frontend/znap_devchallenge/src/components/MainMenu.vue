@@ -27,6 +27,8 @@
           <v-tabs-window-item value="produtos">
             <h1>🛒 Gerenciar Produtos</h1>
             <br/>
+            <h1>Adicionar novo produto</h1>
+            <AddProductsForm/>
             <ViewProductsTable v-if="proddata && proddata.length" :proddata="proddata" />
             <p v-else>Carregando dados...</p>
           </v-tabs-window-item>

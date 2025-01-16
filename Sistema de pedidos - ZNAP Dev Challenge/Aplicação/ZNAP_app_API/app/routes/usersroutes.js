@@ -7,7 +7,7 @@ import { deleteUser } from "./../controller/userscontroller.js"
 const userRoutes = express.Router()
 userRoutes.get("/", getUsers)
 userRoutes.post("/addcustomer", addUser)
-userRoutes.post("/editcustomer", updateUser)
+userRoutes.put("/editcustomer", updateUser)
 userRoutes.delete('/deletecustomer/:id', deleteUser);
 
 export default userRoutes
