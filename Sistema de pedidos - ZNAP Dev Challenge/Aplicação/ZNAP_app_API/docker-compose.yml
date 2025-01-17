@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: mysql_container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Localznap@dmin**
+      MYSQL_DATABASE: znapchallenge_db
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: Localznap@dmin**
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql:ro
+
+  api:
+    build:
+      context: ./Aplicação/ZNAP_app_API
+    container_name: api_container
+    restart: always
+    ports:
+      - "8800:8800"
+    environment:
+      DB_HOST: db
+      DB_USER: admin
+      DB_PASSWORD: Localznap@dmin**
+      DB_NAME: znapchallenge_db
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./Aplicação/ZNAP_app_frontend/znap_devchallenge
+    container_name: frontend_container
+    restart: always
+    ports:
+      - "5173:5173"
+    command: ["npm", "run", "dev"]
+
+volumes:
+  db_data:
