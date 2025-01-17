@@ -15,10 +15,10 @@
         </v-col>
         <v-col cols="12" md="6">
           <v-text-field
-            v-model="newUser.email"
+            v-model="newUser.preco"
             label="Preco"
             dense
-            :rules="[rules.required, rules.email]"
+            :rules="[rules.required, rules.preco]"
             required
             rounded
             class="shrink"
@@ -26,7 +26,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-      <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
+      <v-btn :disabled="!valid" rounded color="secondary" @click="openConfirmModal">
         Adicionar Produto
       </v-btn>
     </v-col>
@@ -34,12 +34,13 @@
     </v-form>
 
     <!-- Modal de Confirmação -->
-    <v-dialog v-model="confirmDialog" max-width="500px">
+    <v-dialog v-model="confirmDialog" max-width="600px">
       <v-card>
         <v-card-title class="headline">Confirmar Informações</v-card-title>
         <v-card-text>
           <p><strong>Nome:</strong> {{ newUser.nome }}</p>
           <p><strong>Preco:</strong> {{ newUser.preco }}</p>
+          <pre>{{ newUser }}</pre>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -52,8 +53,8 @@
 </template>
 
 <script>
-import apiURL from "../setups/axios.js"
-
+import apiURL from "../../setups/axios.js"
+import Swal from "sweetalert2";
 console.log("apiURL",apiURL);
 
 export default {
@@ -106,7 +107,7 @@ export default {
       try {
         const response = await apiURL.post('/produtos/addproduct', product);
         console.log(response.data);
-        alert('Cliente criado com sucesso!');
+        Swal.fire('Produto criado com sucesso!');
         fetchUserData();
       } catch (error) {
         console.error(error);

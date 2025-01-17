@@ -1,7 +1,7 @@
 <template>
   <v-data-table :headers="headers" :items="udata">
     <template v-slot:top>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="dialog" max-width="600px">
         <v-card>
           <v-card-text>
             <v-container>
@@ -24,7 +24,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-dialog v-model="dialogDelete" max-width="600px">
         <v-card>
           <v-card-title class="text-h5">Tem certeza que deseja deletar o item?</v-card-title>
           <v-card-actions>
@@ -49,7 +49,8 @@
 </template>
 
 <script>
-import apiURL from "../setups/axios.js";
+import apiURL from "../../setups/axios.js";
+import Swal from "sweetalert2";
 
 export default {
   props: {
@@ -119,12 +120,13 @@ export default {
         if (response.status === 200) {
           this.udata.splice(this.editedIndex, 1);
           this.closeDelete();
+          Swal.fire("Cliente excluído com sucesso.");
         } else {
-          alert("Erro ao excluir o cliente.");
+          Swal.fire("Erro ao excluir o cliente.");
         }
       } catch (error) {
         console.error("Erro na requisição de exclusão", error);
-        alert("Erro ao excluir o cliente.");
+        Swal.fire("Erro ao excluir o cliente.");
       }
     },
 
@@ -160,18 +162,18 @@ export default {
         if (response.status === 200) {
           if (this.editedIndex > -1) {
             Object.assign(this.udata[this.editedIndex], response.data); // Atualiza o item editado
-            alert("Usuário atualizado com sucesso.");
+            Swal.fire("Usuário atualizado com sucesso.");
           } else {
             this.udata.push(response.data); // Adiciona novo item
-            alert("Usuário adicionado com sucesso.");
+            Swal.fire("Usuário adicionado com sucesso.");
           }
           this.close();
         } else {
-          alert("Erro ao salvar o cliente.");
+          Swal.fire("Erro ao salvar o cliente.");
         }
       } catch (error) {
         console.error("Erro na requisição de salvamento", error);
-        alert("Erro ao salvar o cliente.");
+        Swal.fire("Erro ao salvar o cliente.");
       }
     }
   }

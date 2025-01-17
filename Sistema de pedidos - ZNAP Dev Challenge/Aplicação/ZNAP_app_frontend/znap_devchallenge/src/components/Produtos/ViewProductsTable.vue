@@ -3,7 +3,7 @@
     :headers="headers"
     :items="proddata">
     <template v-slot:top>
-      <v-dialog v-model="dialog" max-width="500px">
+      <v-dialog v-model="dialog" max-width="600px">
         <v-card>
           <v-card-text>
             <v-container>
@@ -28,7 +28,7 @@
         </v-card>
       </v-dialog>
 
-      <v-dialog v-model="dialogDelete" max-width="500px">
+      <v-dialog v-model="dialogDelete" max-width="600px">
         <v-card>
           <v-card-title class="text-h5">Tem certeza que deseja deletar o item?</v-card-title>
           <v-card-actions>
@@ -53,7 +53,8 @@
 </template>
 
 <script>
-import apiURL from "../setups/axios.js";
+import apiURL from "../../setups/axios.js";
+import Swal from "sweetalert2";
 
 export default {
   props: {
@@ -134,7 +135,7 @@ export default {
           this.proddata.splice(this.editedIndex, 1);
           this.closeDelete();
         } else {
-          alert("Erro ao excluir o produto.");
+          Swal.fire("Erro ao excluir o produto.");
         }
       } catch (error) {
         console.log("Erro na requisição de exclusão", error);
@@ -157,26 +158,26 @@ export default {
           const response = await apiURL.put(endpoint, payload);
           if (response.status === 200) {
             Object.assign(this.proddata[this.editedIndex], this.editedItem);
-            alert("Produto atualizado com sucesso.");
+            Swal.fire("Produto atualizado com sucesso.");
             console.log("PRODATA", this.proddata);
             this.close();
           } else {
-            alert("Erro ao atualizar o produto.");
+            Swal.fire("Erro ao atualizar o produto.");
           }
         } else {
           // Adicionando um novo produto
           const response = await apiURL.post('/produtos/addproduto', payload);
           if (response.status === 200) {
             this.proddata.push(response.data);
-            alert("Produto adicionado com sucesso.");
+            Swal.fire("Produto adicionado com sucesso.");
             this.close();
           } else {
-            alert("Erro ao adicionar o produto.");
+            Swal.fire("Erro ao adicionar o produto.");
           }
         }
       } catch (error) {
         console.log("Erro na requisição de salvamento", error);
-        alert("Erro ao salvar o produto.");
+        Swal.fire("Erro ao salvar o produto.");
       }
     }
   }

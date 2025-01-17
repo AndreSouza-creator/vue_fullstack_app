@@ -26,7 +26,7 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-        <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
+        <v-btn :disabled="!valid" rounded color="secondary" @click="openConfirmModal">
           Adicionar Usuário
         </v-btn>
       </v-col>
@@ -35,7 +35,7 @@
     </v-form>
 
     <!-- Modal de Confirmação -->
-    <v-dialog v-model="confirmDialog" max-width="500px">
+    <v-dialog v-model="confirmDialog" max-width="600px">
       <v-card>
         <v-card-title class="headline">Confirmar Informações</v-card-title>
         <v-card-text>
@@ -53,7 +53,8 @@
 </template>
 
 <script>
-import apiURL from "./../setups/axios.js"
+import apiURL from "../../setups/axios.js"
+import Swal from "sweetalert2";
 
 console.log("apiURL",apiURL);
 
@@ -97,7 +98,7 @@ export default {
       try {
         const response = await apiURL.post('/addcustomer', user);
         console.log(response.data);
-        alert('Cliente criado com sucesso!');
+        Swal.fire('Cliente criado com sucesso!');
       } catch (error) {
         console.error(error);
       }

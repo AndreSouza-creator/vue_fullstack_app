@@ -28,6 +28,7 @@
             <AddPedidosForm v-if="udata.length" :udata="udata"/>
             <br/>
             <v-divider></v-divider>
+            <br/>
             <h2>Editar e excluir pedidos</h2>
             <ViewPedidosTable v-if="pedidodata && pedidodata.length" :pedidodata="pedidodata" :udata="udata" :proddata="proddata"/>
             <p v-else>Carregando dados...</p>
@@ -48,12 +49,14 @@
   </template>
   
   <script>
-  import ViewUsersTable from './ViewUsersTable.vue';
-  import ViewProductsTable from './ViewProductsTable.vue';
-  import ViewPedidosTable from './ViewPedidosTable.vue'; 
+  import ViewUsersTable from './Clientes/ViewUsersTable.vue';
+  import ViewProductsTable from './Produtos/ViewProductsTable.vue';
+  import ViewPedidosTable from './Pedidos/ViewPedidosTable.vue'; 
   import apiURL from "../setups/axios.js";
-  import { ref, onMounted } from 'vue';
-  
+  import { onMounted } from 'vue';
+import ViewItensPedidoTable from './Pedidos/Itens de pedido/ViewItensPedidoTable.vue';
+import Swal from "sweetalert2";
+
 onMounted(() => {
   this.fetchUserData();
   this.fetchProdutosData();
@@ -65,6 +68,7 @@ onMounted(() => {
     ViewUsersTable,
     ViewProductsTable,
     ViewPedidosTable,
+    ViewItensPedidoTable
   },
 
   data() {
@@ -83,7 +87,7 @@ onMounted(() => {
         if (response.status === 200) {
           this.udata = response.data;
         } else {
-          alert("Error fetching data");
+          Swal.fire("Error fetching data");
         }
       } catch (error) {
         console.log(error);
@@ -95,7 +99,7 @@ onMounted(() => {
         if (response.status === 200) {
           this.proddata = response.data;
         } else {
-          alert("Error fetching data");
+          Swal.fire("Error fetching data");
         }
       } catch (error) {
         console.log(error);
@@ -107,7 +111,7 @@ onMounted(() => {
         if (response.status === 200) {
           this.pedidodata = response.data;
         } else {
-          alert("Error fetching data");
+          Swal.fire("Error fetching data");
         }
       } catch (error) {
         console.log(error);

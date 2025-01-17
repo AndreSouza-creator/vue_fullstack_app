@@ -14,24 +14,21 @@
           <v-select 
             v-model="newDemand.nome_cliente" 
             :items="udata.map((ud) => ud.nome)"
-            label="Selecione o Cliente">
+            label="Selecione o Cliente atrelado a esse pedido"
+            rounded
+            variant="outlined">
           </v-select>
         </v-col>
         <v-col>
-      <!--     <v-select 
-            v-model="newDemand.id_produto" 
-            :items="proddata.map((prod) => prod.nome)"
-            label="Selecione o produto">
-          </v-select> -->
         </v-col>
       </v-row>
 
-      <v-btn :disabled="!valid" color="primary" @click="openConfirmModal">
+      <v-btn :disabled="!valid" rounded color="secondary" @click="openConfirmModal">
         Adicionar Pedido
       </v-btn>
     </v-form>
     <!-- Modal de Confirmação -->
-    <v-dialog v-model="confirmDialog" max-width="500px">
+    <v-dialog v-model="confirmDialog" max-width="600px">
       <v-card>
         <v-card-title class="headline">Confirmar Informações</v-card-title>
         <v-card-text>
@@ -50,7 +47,8 @@
 </template>
 
 <script>
-import apiURL from "../setups/axios.js";
+import apiURL from "../../setups/axios.js";
+import Swal from "sweetalert2";
 
 export default {
   props: {
@@ -100,10 +98,9 @@ export default {
     },
     saveDemand() {
       this.products.push({ ...this.newDemand });
-      this.newDemand = { id_pedido: '', data: '', descricao: '', id_cliente: null, nome_cliente: '' };
+      this.newDemand = { id_pedido: '', data: '', descricao: '', id_cliente: null, nome_cliente: '', id_pedido: '' };
       this.$refs.form.reset();
       this.confirmDialog = false;
-
       this.sendDataToServer(this.products[this.products.length - 1]);
     },
     formatDateToMySQL(date) {
@@ -124,7 +121,7 @@ export default {
         nome_cliente: pedido.nome_cliente
       });
       console.log("OPAYLOAD",pedido);
-      alert('Pedido criado com sucesso!');
+      Swal.fire('Pedido criado com sucesso!');
     } catch (error) {
       console.error(error.response.data);
     }
@@ -156,5 +153,18 @@ export default {
 <style lang="css" scoped>
 .v-row{
   flex-direction: column;
+}
+
+
+@media(min-width: 1000px){
+  .containerAddForm {
+    width: 50%;
+    margin-left: 0px;
+
+    padding: 0px;
+    display: flex;
+    flex-direction: column;
+}
+
 }
 </style>

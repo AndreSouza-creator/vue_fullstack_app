@@ -34,10 +34,11 @@
       margin-left: 100%;
      }
 
-     .v-col {
+     .v-row {
     flex-basis: 0;
     flex-grow: 1;
     min-width: 100%;
+    padding: 0px;
 }  
 
 
