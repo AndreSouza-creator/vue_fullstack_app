@@ -11,7 +11,7 @@ import { deletePedidoItem } from "../controller/itenspedidocontroller.js"
 const pedidosRoutes = express.Router()
 pedidosRoutes.get("/getpedidos", getPedidos)
 pedidosRoutes.post("/addpedido", addPedido)
-pedidosRoutes.put("/editpedido", updatePedido)
+pedidosRoutes.put("/editpedido/", updatePedido)
 pedidosRoutes.delete("/deletepedido/:id", deletePedido)
 pedidosRoutes.get("/getpedidoitens/:id", getItensPedidos)
 pedidosRoutes.post("/addpedidoitem", addItemPedido)

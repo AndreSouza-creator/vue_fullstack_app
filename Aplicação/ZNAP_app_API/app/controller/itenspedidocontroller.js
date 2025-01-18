@@ -23,13 +23,14 @@ export const getItensPedidos = (req, res) => {
 // Adicionar um novo item ao pedido
 export const addItemPedido = (req, res) => {
   const query =
-    "INSERT INTO pedidoitens (`id_pedido`, `id_produto`, `qtde`, `preco`) VALUES (?)";
+    "INSERT INTO pedidoitens (`id_pedido`, `id_produto`, `qtde`, `preco`, `nome_produto`) VALUES (?)";
 
   const values = [
     req.body.id_pedido, // ID do pedido
     req.body.id_produto, // ID do produto
     req.body.qtde, // Quantidade do item
     req.body.preco, // Preço do item
+    req.body.nome_produto, // Produto atreladdo ao item
   ];
 
   if (!req.body.id_pedido || !req.body.id_produto || !req.body.qtde || !req.body.preco) {
