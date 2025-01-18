@@ -1,8 +1,8 @@
 <template>
-  <v-data-table v-if="localPedidoItemData.length" :headers="headers" :items="localPedidoItemData && localPedidoItemData.length">
+  <v-data-table v-if="localPedidoItemData.length" :headers="headers" :items="localPedidoItemData">
     <template v-slot:top>
       <v-row>
-        <v-dialog v-model="dialog" max-width="500px">
+        <v-dialog v-model="dialog" max-width="600px">
           <v-card>
             <v-card-text>
               <v-container>
@@ -32,7 +32,7 @@
           </v-card>
         </v-dialog>
 
-        <v-dialog v-model="dialogDelete" max-width="500px">
+        <v-dialog v-model="dialogDelete" max-width="600px">
           <v-card>
             <v-card-title class="text-h5">Tem certeza que deseja deletar o item?</v-card-title>
             <v-card-actions>
@@ -58,6 +58,7 @@
 
 <script>
 import apiURL from "../../../setups/axios.js";
+import Swal from "sweetalert2";
 
 export default {
   props: {
@@ -130,20 +131,20 @@ export default {
         if (response.status === 200) {
           this.localPedidoItemData.splice(this.editedIndex, 1);
           this.closeDelete();
-          alert("Item do pedido excluído com sucesso.");
+          Swal.fire("Item do pedido excluído com sucesso.");
         } else {
-          alert("Erro ao excluir o item do pedido.");
+          Swal.fire("Erro ao excluir o item do pedido.");
         }
       } catch (error) {
         console.log("Erro na requisição de exclusão", error);
-        alert("Erro ao excluir o item do pedido.");
+        Swal.fire("Erro ao excluir o item do pedido.");
       }
     },
 
     async save() {
       try {
         const payload = {
-          
+          id_pedido_item: this.editedItem.id_pedido_item,
           id_pedido: this.editedItem.id_pedido,
           id_produto: this.editedItem.id_produto,
           qtde: this.editedItem.qtde,
@@ -155,24 +156,24 @@ export default {
           response = await apiURL.put("/pedidos/editpedidoitem", payload);
           if (response.status === 200) {
             Object.assign(this.localPedidoItemData[this.editedIndex], this.editedItem);
-            alert("Item do pedido atualizado com sucesso.");
+            Swal.fire("Item do pedido atualizado com sucesso.");
           } else {
-            alert("Erro ao atualizar o item do pedido.");
+            Swal.fire("Erro ao atualizar o item do pedido.");
           }
         } else {
           response = await apiURL.post('/pedidos/addpedidoitem', payload);
           if (response.status === 200) {
             this.localPedidoItemData.push(response.data);
-            alert("Item do pedido adicionado com sucesso.");
+            Swal.fire("Item do pedido adicionado com sucesso.");
           } else {
-            alert("Erro ao adicionar o item do pedido.");
+            Swal.fire("Erro ao adicionar o item do pedido.");
           }
         }
 
         this.close();
       } catch (error) {
         console.log("Erro na requisição de salvamento", error);
-        alert("Erro ao salvar o item do pedido.");
+        Swal.fire("Erro ao salvar o item do pedido.");
       }
     }
   }

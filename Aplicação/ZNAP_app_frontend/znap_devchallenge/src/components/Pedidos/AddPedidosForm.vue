@@ -3,20 +3,21 @@
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
         <v-col>
-          <v-text-field v-model="newDemand.data" label="Data" :rules="[rules.required, rules.data]" @input="formatData"
+          <v-text-field v-model="newDemand.data" label="Data" dense :rules="[rules.required, rules.data]"
+            @input="formatData" required rounded class="shrink" variant="outlined"></v-text-field>
+        </v-col>
+        <v-col>
+          <v-text-field v-model="newDemand.descricao" label="Descricao" dense :rules="[rules.required, rules.descricao]"
             required rounded class="shrink" variant="outlined"></v-text-field>
         </v-col>
         <v-col>
-          <v-text-field v-model="newDemand.descricao" label="Descricao" :rules="[rules.required, rules.descricao]"
-            required rounded class="shrink" variant="outlined"></v-text-field>
-        </v-col>
-        <v-col>
-          <v-select v-model="newDemand.id_cliente"
-            :items="udata.map(client => ({ id_cliente: client.id_cliente, nome_cliente: client.nome }))"
-            item-title="nome_cliente" item-value="id_cliente" label="Selecione o Cliente atrelado a esse pedido"
-            @change="updateClientName" rounded variant="outlined">
+          <v-select 
+            v-model="newDemand.nome_cliente" 
+            :items="udata.map((ud) => ud.nome)"
+            label="Selecione o Cliente atrelado a esse pedido"
+            rounded
+            variant="outlined">
           </v-select>
-
         </v-col>
         <v-col>
         </v-col>
@@ -34,8 +35,6 @@
           <p><strong>Data:</strong> {{ newDemand.data }}</p>
           <p><strong>Descricao:</strong> {{ newDemand.descricao }}</p>
           <p><strong>Cliente:</strong> {{ newDemand.nome_cliente }}</p>
-
-          <pre>{{ newDemand }}</pre>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -83,15 +82,15 @@ export default {
     };
   },
   watch: {
-    'newDemand.nome_cliente': function (newName) {
-      const client = this.udata.find(client => client.nome === newName);
-      this.newDemand.id_cliente = client ? client.id_cliente : null;
-    }
-  },
+  'newDemand.nome_cliente': function (newName) {
+    const client = this.udata.find(client => client.nome === newName);
+    this.newDemand.id_cliente = client ? client.id_cliente : null;
+  }
+},
   methods: {
     someMethod() {
-      console.log("V-MODEL", this.newDemand.id_cliente); // v-model aqui
-    },
+    console.log("V-MODEL",this.newDemand.id_cliente); // Acessando o valor do v-model aqui
+     },
     openConfirmModal() {
       if (this.$refs.form.validate()) {
         this.confirmDialog = true;
@@ -105,28 +104,29 @@ export default {
       this.sendDataToServer(this.products[this.products.length - 1]);
     },
     formatDateToMySQL(date) {
-      const [day, month, year] = date.split('/');
-      return `${year}-${month}-${day}`; // Retorna no formato YYYY-MM-DD
-    },
+    const [day, month, year] = date.split('/');
+    return `${year}-${month}-${day}`; // Retorna no formato YYYY-MM-DD
+  },
 
 
 
-    //REQUISICAO
-    async sendDataToServer(pedido) {
-      try {
-        const formattedDate = this.formatDateToMySQL(pedido.data); // Formata a data
-        const response = await apiURL.post('/pedidos/addpedido', {
-          id_cliente: pedido.id_cliente,
-          data: formattedDate,
-          descricao: pedido.descricao,
-          nome_cliente: pedido.nome_cliente
-        });
-        console.log("OPAYLOAD", pedido);
-        Swal.fire('Pedido criado com sucesso!');
-      } catch (error) {
-        console.error(error.response.data);
-      }
-    },
+  //REQUISICAO
+ async sendDataToServer(pedido) {
+    console.log("O PAYLOAD",pedido);
+    try {
+      const formattedDate = this.formatDateToMySQL(pedido.data); // Formata a data
+      const response = await apiURL.post('/pedidos/addpedido', {
+        id_cliente: pedido.id_cliente,
+        data: formattedDate,
+        descricao: pedido.descricao,
+        nome_cliente: pedido.nome_cliente
+      });
+      console.log("OPAYLOAD",pedido);
+      Swal.fire('Pedido criado com sucesso!');
+    } catch (error) {
+      console.error(error.response.data);
+    }
+  },
 
     formatData(event) {
       let value = event.target.value.replace(/\D/g, '');
@@ -141,23 +141,23 @@ export default {
       event.target.value = value;
     },
 
-    getClientIdByName() {
-      const client = this.udata.find(client => client.nome === this.newDemand.nome_cliente);
-      console.log("CLIENTBYNAME", client);
-      return client ? client.id_cliente : null; // Retorna o id_cliente ou null caso não encontre
-
-    }
+  getClientIdByName() {
+    const client = this.udata.find(client => client.nome === this.newDemand.nome_cliente);
+    console.log("CLIENTBYNAME", client);
+    return client ? client.id_cliente : null; // Retorna o id_cliente ou null caso não encontre
+    
+  }
 
   }
 };
 </script>
 <style lang="css" scoped>
-.v-row {
+.v-row{
   flex-direction: column;
 }
 
 
-@media(min-width: 1000px) {
+@media(min-width: 1000px){
   .containerAddForm {
     width: 50%;
     margin-left: 0px;
@@ -165,7 +165,7 @@ export default {
     padding: 0px;
     display: flex;
     flex-direction: column;
-  }
+}
 
 }
 </style>

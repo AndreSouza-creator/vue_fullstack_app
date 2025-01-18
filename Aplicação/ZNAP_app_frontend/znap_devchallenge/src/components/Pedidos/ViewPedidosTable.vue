@@ -3,30 +3,16 @@
     <template v-slot:top>
       <v-row>
         <v-col cols="12" md="4">
-          <br/>
-          <v-select
-            v-model="selectedClient"
-            :items="udata.map(u => ({ nome: u.nome, valor: u.id_cliente }))"
-            label="Filtrar por cliente"
-            item-title="nome"
-            item-value="valor"
-            clearable
-            rounded
-            variant="outlined"
-          ></v-select>
+          <br />
+          <v-select v-model="selectedClient" :items="udata.map(u => ({ nome: u.nome, valor: u.id_cliente }))"
+            label="Filtrar por cliente" item-title="nome" item-value="valor" clearable rounded
+            variant="outlined"></v-select>
         </v-col>
         <v-col cols="12" md="4">
-          <br/>
-          <v-select
-            v-model="selectedProduct"
-            :items="proddata.map(p => ({ text: p.nome_produto, value: p.id_produto }))"
-            label="Filtrar por produto"
-            item-text="text"
-            item-value="value"
-            clearable
-            rounded
-            variant="outlined"
-          ></v-select>
+          <br />
+          <v-select v-model="selectedProduct"
+            :items="proddata.map(p => ({ text: p.nome_produto, value: p.id_produto }))" label="Filtrar por produto"
+            item-text="text" item-value="value" clearable rounded variant="outlined"></v-select>
         </v-col>
       </v-row>
 
@@ -45,20 +31,18 @@
                   :rules="[rules.required, rules.data]"></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-select
-                  v-model="editedItem.nome_cliente"
-                  :items="udata.map(u => u.nome)"
-                  label="Cliente atrelado ao pedido"
-                ></v-select>
-                <pre>{{ editedItem }}</pre>
+                <v-select v-model="editedItem.nome_cliente" :items="udata.map(u => u.nome)"
+                  label="Cliente atrelado ao pedido"></v-select>
               </v-col>
               <v-col cols="12">
                 <h2>Itens do pedido</h2>
-                <br/>
+                <br />
                 <v-divider></v-divider>
-                <br/>
-                <AddItensPedidosForm :pedidodata="pedidodata" :udata="udata" :proddata="proddata" :editedItem="editedItem"></AddItensPedidosForm>
-                <ViewItensPedidoTable :pedidodata="pedidodata" :udata="udata" :proddata="proddata" :localPedidoItemData="localPedidoItemData"/>
+                <br />
+                <AddItensPedidosForm :pedidodata="pedidodata" :udata="udata" :proddata="proddata"
+                  :editedItem="editedItem"></AddItensPedidosForm>
+                <ViewItensPedidoTable :pedidodata="pedidodata" :udata="udata" :proddata="proddata"
+                  :localPedidoItemData="localPedidoItemData" />
               </v-col>
             </v-container>
           </v-card-text>
@@ -152,7 +136,7 @@ export default {
       return this.pedidodata.filter(pedido => {
         const matchesClient = !this.selectedClient || pedido.id_cliente === this.selectedClient;
 
-        const matchesProduct = !this.selectedProduct || 
+        const matchesProduct = !this.selectedProduct ||
           this.localPedidoItemData.some(item =>
             item.id_pedido === pedido.id_pedido && item.id_produto === this.selectedProduct
           );
@@ -207,18 +191,7 @@ export default {
       this.editedItem = Object.assign({}, item);
       this.dialogDelete = true;
     },
-    close() {
-      this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
-    },
-    closeDelete() {
-      this.dialogDelete = false;
-      this.editedItem = Object.assign({}, this.defaultItem);
-      this.editedIndex = -1;
-    },
+
     async deleteItemConfirm() {
       try {
         const response = await apiURL.delete(`/pedidos/deletepedido/${this.editedItem.id_pedido}`);
@@ -242,6 +215,50 @@ export default {
       } catch (error) {
         console.error("Erro ao buscar os itens do pedido:", error);
       }
+    },
+    async save() {
+      try {
+        // Validação dos campos obrigatórios
+        if (!this.editedItem.descricao || !this.editedItem.data || !this.editedItem.id_cliente) {
+          Swal.fire("Erro", "Preencha todos os campos obrigatórios.", "error");
+          return;
+        }
+
+        // Converte a data para o formato MySQL
+        const formattedDate = this.formatDateToMySQL(this.editedItem.data);
+
+        // Define o payload com os dados do pedido
+        const payload = {
+          descricao: this.editedItem.descricao,
+          data: formattedDate,
+          id_cliente: this.editedItem.id_cliente,
+          nome_cliente: this.editedItem.nome_cliente,
+          id_pedido: this.editedItem.id_pedido,
+        };
+
+        // Atualizar pedido existente
+        const response = await apiURL.put('/pedidos/editpedido/', payload);
+        if (response.status === 200) {
+    if (response.data?.message?.includes("sucesso")) {
+        // Atualiza o pedido na tabela
+        Object.assign(this.pedidodata[this.editedIndex], {
+            ...payload,
+            nome_cliente: this.udata.find(u => u.id_cliente === this.editedItem.id_cliente)?.nome || ''
+        });
+        Swal.fire("Sucesso", "Pedido atualizado com sucesso.", "success");
+    } else {
+      Swal.fire("Sucesso", "Pedido atualizado com sucesso.", "success");
+        console.log("Atenção", "Pedido atualizado, mas mensagem inesperada da API.", "info");
+    }
+    } else {
+        Swal.fire("Erro", "Erro inesperado ao atualizar o pedido.", "error");
+    }
+
+       this.close();
+      } catch (error) {
+        console.error("Erro ao salvar o pedido:", error);
+      }
+
     }
   }
 };
