@@ -7,7 +7,6 @@
   >
     <template v-slot:top>
       <v-row class="mb-4">
-        <!-- Filtro por Produto -->
         <v-col cols="12" md="6">
           <v-select
             v-model="selectedProduct"
@@ -30,7 +29,6 @@
     <p>Nenhum item encontrado para exibição.</p>
   </div>
 
-  <!-- Dialog para editar itens -->
   <v-dialog v-model="dialog" max-width="600px">
     <v-card>
       <v-card-text>
@@ -56,6 +54,7 @@
               label="Quantidade"
               type="number"
               :rules="[rules.required, rules.number]"
+              @input="updatePrice"
             ></v-text-field>
           </v-col>
           <v-col cols="12">
@@ -64,6 +63,7 @@
               label="Preço"
               type="number"
               :rules="[rules.required, rules.number]"
+              :readonly="true"
             ></v-text-field>
           </v-col>
         </v-container>
@@ -77,7 +77,6 @@
     </v-card>
   </v-dialog>
 
-  <!-- Dialog para deletar itens -->
   <v-dialog v-model="dialogDelete" max-width="600px">
     <v-card>
       <v-card-title class="text-h5">
@@ -95,6 +94,7 @@
   </v-dialog>
 </template>
 
+
 <script>
 import apiURL from "../../../setups/axios.js";
 import Swal from "sweetalert2";
@@ -102,6 +102,10 @@ import Swal from "sweetalert2";
 export default {
   props: {
     localPedidoItemData: {
+      type: Array,
+      required: true
+    },
+    proddata: {
       type: Array,
       required: true
     }
@@ -164,6 +168,10 @@ export default {
     editItem(item) {
       this.editedIndex = this.localPedidoItemData.indexOf(item);
       this.editedItem = { ...item };
+
+      // Garantir que o preço seja atualizado no momento da edição
+      this.updatePrice();  // Atualiza o preço imediatamente ao abrir o diálogo de edição
+
       this.dialog = true;
     },
 
@@ -187,94 +195,61 @@ export default {
       this.editedIndex = -1;
     },
 
-    async deleteItemConfirm() {
-      try {
-        const response = await apiURL.delete(
-          `/pedidos/deletepedidoitem/${this.editedItem.id_pedido_item}`
-        );
-        if (response.status === 200) {
-          this.localPedidoItemData.splice(this.editedIndex, 1);
-          this.closeDelete();
-          Swal.fire({
-            customClass: {
-              container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Item do pedido excluído com sucesso."
-          });
-        } else {
-          Swal.fire({
-            customClass: {
-              container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Erro ao excluir o item do pedido."
-          });
-        }
-      } catch (error) {
-        console.error("Erro na requisição de exclusão", error);
-        Swal.fire({
-          customClass: {
-            container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-          },
-          title: "Erro ao excluir o item do pedido."
-        });
+    // Atualiza o preço quando a quantidade é alterada
+    updatePrice() {
+      const preco = this.getDefaultPrice();
+      if (preco !== undefined) {
+        this.editedItem.preco = preco;
       }
     },
 
+    // Função para pegar o preço ajustado baseado no produto
+    getDefaultPrice() {
+  const produtoCorrespondente = this.proddata.find(
+    (prod) => prod.id_produto === this.editedItem.id_produto
+  );
+  if (produtoCorrespondente && produtoCorrespondente.preco && this.editedItem.qtde) {
+    const precoajustado = produtoCorrespondente.preco * this.editedItem.qtde;
+    console.log("O PRECO EM GETDEFAULTPRICE", precoajustado);
+    return precoajustado;
+  }
+  return 0; // Caso não haja valor adequado
+},
+
     async save() {
+      const payload = { ...this.editedItem };
+
       try {
-        const payload = { ...this.editedItem };
-
-        let response;
-        if (this.editedIndex > -1) {
-          response = await apiURL.put("/pedidos/editpedidoitem", payload);
-          if (response.status === 200) {
-            Object.assign(
-              this.localPedidoItemData[this.editedIndex],
-              this.editedItem
-            );
-            Swal.fire({
-              customClass: {
-                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-              },
-              title: "Item do pedido atualizado com sucesso."
-            });
-          } else {
-            Swal.fire({
-              customClass: {
-                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-              },
-              title: "Erro ao atualizar o item do pedido."
-            });
-          }
+        // Enviar payload para o servidor (no backend)
+        const response = await apiURL.put("/pedidos/editpedidoitem", payload);
+        if (response.status === 200) {
+          Object.assign(
+            this.localPedidoItemData[this.editedIndex],
+            this.editedItem
+          );
+          Swal.fire({
+            customClass: {
+              container: "swal-container-above"
+            },
+            title: "Item do pedido atualizado com sucesso."
+          });
         } else {
-          response = await apiURL.post("/pedidos/addpedidoitem", payload);
-          if (response.status === 200) {
-            this.localPedidoItemData.push(response.data);
-            Swal.fire({
-              customClass: {
-                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-              },
-              title: "Item do pedido adicionado com sucesso."
-            });
-          } else {
-            Swal.fire({
-              customClass: {
-                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-              },
-              title: "Erro ao adicionar o item do pedido."
-            });
-          }
+          Swal.fire({
+            customClass: {
+              container: "swal-container-above"
+            },
+            title: "Erro ao atualizar o item do pedido."
+          });
         }
-
-        this.close();
       } catch (error) {
         Swal.fire({
           customClass: {
-            container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            container: "swal-container-above"
           },
           title: "Erro ao salvar o item do pedido."
         });
       }
+      this.close();
     }
   }
 };

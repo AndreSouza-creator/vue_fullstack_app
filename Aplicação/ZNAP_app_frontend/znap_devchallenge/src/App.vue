@@ -66,7 +66,7 @@ const loading = ref(true);
 onMounted(() => {
   setTimeout(() => {
     loading.value = false;
-  }, 2000); // Tempo de exibição do loader lottie.
+  }, 1000); // Tempo de exibição do loader lottie.
 });
 </script>
 

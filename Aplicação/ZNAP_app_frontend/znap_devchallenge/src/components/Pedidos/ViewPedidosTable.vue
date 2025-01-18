@@ -35,7 +35,7 @@
                 <br />
                 <AddItensPedidosForm :pedidodata="pedidodata" :udata="udata" :proddata="proddata"
                   :editedItem="editedItem"></AddItensPedidosForm>
-                <ViewItensPedidoTable :pedidodata="pedidodata" :udata="udata" :proddata="produtos"
+                <ViewItensPedidoTable :pedidodata="pedidodata" :udata="udata" :proddata="proddata"
                   :localPedidoItemData="localPedidoItemData" />
               </v-col>
             </v-container>
