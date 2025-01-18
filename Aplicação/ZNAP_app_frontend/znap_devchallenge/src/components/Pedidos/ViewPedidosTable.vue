@@ -6,9 +6,10 @@
           <br/>
           <v-select
             v-model="selectedClient"
-            :items="udata.map(u => ({ text: u.nome, value: u.id_cliente }))"
-            :item-text="nome"
-                 label="Filtrar por cliente"
+            :items="udata.map(u => ({ nome: u.nome, valor: u.id_cliente }))"
+            label="Filtrar por cliente"
+            item-title="nome"
+            item-value="valor"
             clearable
             rounded
             variant="outlined"
@@ -20,7 +21,8 @@
             v-model="selectedProduct"
             :items="proddata.map(p => ({ text: p.nome_produto, value: p.id_produto }))"
             label="Filtrar por produto"
-            :item-text="nome_produto"
+            item-text="text"
+            item-value="value"
             clearable
             rounded
             variant="outlined"
@@ -48,6 +50,7 @@
                   :items="udata.map(u => u.nome)"
                   label="Cliente atrelado ao pedido"
                 ></v-select>
+                <pre>{{ editedItem }}</pre>
               </v-col>
               <v-col cols="12">
                 <h2>Itens do pedido</h2>
@@ -189,6 +192,32 @@ export default {
       if (value.length > 2) value = value.slice(0, 2) + '/' + value.slice(2);
       if (value.length > 5) value = value.slice(0, 5) + '/' + value.slice(5, 9);
       this.editedItem.data = value;
+    },
+    editItem(item) {
+      this.fetchPedidoItens(item.id_pedido);
+      this.editedIndex = this.pedidodata.indexOf(item);
+      this.editedItem = {
+        ...item,
+        data: this.formatDateToDisplay(item.data) // Exibe no formato DD/MM/YYYY
+      };
+      this.dialog = true;
+    },
+    deleteItem(item) {
+      this.editedIndex = this.pedidodata.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialogDelete = true;
+    },
+    close() {
+      this.dialog = false;
+      this.$nextTick(() => {
+        this.editedItem = Object.assign({}, this.defaultItem);
+        this.editedIndex = -1;
+      });
+    },
+    closeDelete() {
+      this.dialogDelete = false;
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
     },
     async deleteItemConfirm() {
       try {
