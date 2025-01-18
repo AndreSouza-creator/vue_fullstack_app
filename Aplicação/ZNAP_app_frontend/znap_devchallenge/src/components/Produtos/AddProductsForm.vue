@@ -16,7 +16,7 @@
         <v-col cols="12" md="6">
           <v-text-field
             v-model="newUser.preco"
-            label="Preco"
+            label="Preço"
             dense
             :rules="[rules.required, rules.preco]"
             required
@@ -39,7 +39,7 @@
         <v-card-title class="headline">Confirmar Informações</v-card-title>
         <v-card-text>
           <p><strong>Nome:</strong> {{ newUser.nome }}</p>
-          <p><strong>Preco:</strong> R$ {{ newUser.preco }}</p>
+          <p><strong>Preço:</strong> R$ {{ newUser.preco }}</p>
           <pre>{{ newUser }}</pre>
         </v-card-text>
         <v-card-actions>

@@ -14,7 +14,7 @@
                   <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
                 </v-col>
                 <v-col cols="12" >
-                  <v-text-field v-model="editedItem.preco" label="Preco"></v-text-field>
+                  <v-text-field v-model="editedItem.preco" label="Preço"></v-text-field>
                 </v-col>
               
             </v-container>
@@ -68,7 +68,7 @@ export default {
     dialogDelete: false,
     headers: [
       { title: 'Nome', align: 'start', sortable: false, key: 'nome' },
-      { title: 'Preco', key: 'preco' },  
+      { title: 'Preço', key: 'preco' },  
       { title: 'Ações', key: 'actions', sortable: false }
     ],
     editedIndex: -1,
