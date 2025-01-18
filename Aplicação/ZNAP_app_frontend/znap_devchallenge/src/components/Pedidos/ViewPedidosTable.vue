@@ -8,12 +8,6 @@
             label="Filtrar por cliente" item-title="nome" item-value="valor" clearable rounded
             variant="outlined"></v-select>
         </v-col>
-        <v-col cols="12" md="4">
-          <br />
-          <v-select v-model="selectedProduct"
-            :items="proddata.map(p => ({ text: p.nome_produto, value: p.id_produto }))" label="Filtrar por produto"
-            item-text="text" item-value="value" clearable rounded variant="outlined"></v-select>
-        </v-col>
       </v-row>
 
       <v-dialog v-model="dialog" max-width="600px">
