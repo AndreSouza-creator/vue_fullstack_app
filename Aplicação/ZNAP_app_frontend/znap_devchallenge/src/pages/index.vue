@@ -8,7 +8,7 @@
 
   </v-app-bar>
   <v-container>
-    <h1>Olá, bem vindo!</h1> 
+    <h1>Olá, bem vindo ao painel de administração ZNAP!</h1> 
     <p>Selecione um item para administrar</p>
     <br/>
     <v-divider/>

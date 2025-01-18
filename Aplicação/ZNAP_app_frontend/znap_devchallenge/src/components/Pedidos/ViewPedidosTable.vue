@@ -217,17 +217,6 @@ export default {
     },
     async save() {
       try {
-        // Validação dos campos obrigatórios
-        if (!this.editedItem.descricao || !this.editedItem.data || !this.editedItem.id_cliente) {
-          Swal.fire({
-          customClass: {
-          icon: 'error',
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title:  "Preencha todos os campos obrigatórios."
-          });
-          return;
-        }
 
         // Converte a data para o formato MySQL
         const formattedDate = this.formatDateToMySQL(this.editedItem.data);
