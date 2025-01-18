@@ -27,7 +27,7 @@
         Adicionar Pedido
       </v-btn>
     </v-form>
-    <!-- Modal de Confirmação -->
+    <!-- Modal de Confirmação de adição do novo pedido-->
     <v-dialog v-model="confirmDialog" max-width="600px">
       <v-card>
         <v-card-title class="headline">Confirmar Informações</v-card-title>
@@ -122,7 +122,12 @@ export default {
         nome_cliente: pedido.nome_cliente
       });
       console.log("OPAYLOAD",pedido);
-      Swal.fire('Pedido criado com sucesso!');
+      Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Pedido criado com sucesso!"
+          });
     } catch (error) {
       console.error(error.response.data);
     }
@@ -152,10 +157,14 @@ export default {
 };
 </script>
 <style lang="css" scoped>
+
+.swal-container-above{
+  z-index: 99999 !important;
+}
+
 .v-row{
   flex-direction: column;
 }
-
 
 @media(min-width: 1000px){
   .containerAddForm {

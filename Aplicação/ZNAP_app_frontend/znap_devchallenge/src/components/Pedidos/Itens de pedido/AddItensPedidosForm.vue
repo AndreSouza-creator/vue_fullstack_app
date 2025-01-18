@@ -2,7 +2,7 @@
   <v-container class="containerAddForm">
     <v-form ref="form" v-model="valid" lazy-validation>
       <v-row>
-        <p>Adicionar novo item ao pedido</p>
+        <h3>Adicionar novo item ao pedido</h3>
         <v-col>
           <v-select
             v-model="newItemPedido.nome_produto"
@@ -135,18 +135,26 @@ export default {
       }
     },
     saveItemPedido() {
+
+      
   if (this.$refs.form.validate()) {
+    console.log("newItemPedido",this.newItemPedido);
     // Enviar dados para o endpoint
     apiURL
       .post("/pedidos/addpedidoitem", {
         id_pedido: this.newItemPedido.id_pedido,
         id_produto: this.newItemPedido.id_produto,
         qtde: this.newItemPedido.qtde,
-        preco: this.newItemPedido.preco, // Enviar o valor total calculado
+        preco: this.newItemPedido.preco,
+        nome_produto: this.newItemPedido.nome_produto, // Enviar o valor total calculado
       })
       .then(() => {
-        Swal.fire("Item adicionado ao pedido com sucesso!");
-
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Item adicionado ao pedido com sucesso!"
+          });
         // Resetar formulário após sucesso
         this.newItemPedido = {
           id_pedido: null,
@@ -160,7 +168,12 @@ export default {
       })
       .catch((error) => {
         console.error("Erro ao adicionar item ao pedido:", error);
-        Swal.fire("Erro ao adicionar item ao pedido. Por favor, tente novamente.");
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao adicionar item ao pedido. Por favor, tente novamente."
+          });
       });
   }
 },
@@ -178,7 +191,17 @@ export default {
 
 
 <style lang="css" scoped>
+
+.containerAddForm{
+  border: solid 0.5px white;
+  padding: 35px;
+  border-radius: 20px;
+}
 .v-row {
   flex-direction: column;
+}
+
+.swal-container-above{
+  z-index: 99999 !important;
 }
 </style>

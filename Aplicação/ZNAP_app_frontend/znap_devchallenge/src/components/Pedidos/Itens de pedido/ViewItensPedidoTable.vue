@@ -1,4 +1,5 @@
 <template>
+  <br/>
   <v-data-table
     v-if="filteredPedidoItemData.length"
     :headers="headers"
@@ -110,8 +111,7 @@ export default {
     dialogDelete: false,
     headers: [
       { title: "ID", key: "id_pedido_item", sortable: true },
-      { title: "Pedido", key: "id_pedido", sortable: true },
-      { title: "Produto", key: "id_produto", sortable: true },
+      { title: "Produto", key: "nome_produto", sortable: true },
       { title: "Qtd", key: "qtde", sortable: true },
       { title: "Preço", key: "preco", sortable: true },
       { title: "Ações", key: "actions", sortable: false }
@@ -121,6 +121,7 @@ export default {
       id_pedido_item: null,
       id_pedido: null,
       id_produto: null,
+      nome_produto: null,
       qtde: null,
       preco: null
     },
@@ -128,6 +129,7 @@ export default {
       id_pedido_item: null,
       id_pedido: null,
       id_produto: null,
+      nome_produto: null,
       qtde: null,
       preco: null
     },
@@ -140,8 +142,6 @@ export default {
   }),
   computed: {
     filteredPedidoItemData() {
-      console.log("selectedProduct:", this.selectedProduct);
-      console.log("localPedidoItemData:", this.localPedidoItemData);
       if (!this.selectedProduct && this.selectedProduct !== 0) {
         return this.localPedidoItemData; // Exibe todos os itens se não houver filtro
       }
@@ -193,13 +193,28 @@ export default {
         if (response.status === 200) {
           this.localPedidoItemData.splice(this.editedIndex, 1);
           this.closeDelete();
-          Swal.fire("Item do pedido excluído com sucesso.");
+          Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Item do pedido excluído com sucesso."
+          });
         } else {
-          Swal.fire("Erro ao excluir o item do pedido.");
+          Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao excluir o item do pedido."
+          });
         }
       } catch (error) {
         console.error("Erro na requisição de exclusão", error);
-        Swal.fire("Erro ao excluir o item do pedido.");
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao excluir o item do pedido."
+          });
       }
     },
 
@@ -215,24 +230,49 @@ export default {
               this.localPedidoItemData[this.editedIndex],
               this.editedItem
             );
-            Swal.fire("Item do pedido atualizado com sucesso.");
+            Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Item do pedido atualizado com sucesso."
+          });
           } else {
-            Swal.fire("Erro ao atualizar o item do pedido.");
+
+            Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao atualizar o item do pedido."
+          });
           }
         } else {
           response = await apiURL.post("/pedidos/addpedidoitem", payload);
           if (response.status === 200) {
             this.localPedidoItemData.push(response.data);
-            Swal.fire("Item do pedido adicionado com sucesso.");
+            Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Item do pedido adicionado com sucesso."
+          });
           } else {
-            Swal.fire("Erro ao adicionar o item do pedido.");
+            Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao adicionar o item do pedido."
+          });
           }
         }
 
         this.close();
       } catch (error) {
-        console.error("Erro na requisição de salvamento", error);
-        Swal.fire("Erro ao salvar o item do pedido.");
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao salvar o item do pedido."
+          });
       }
     }
   }
@@ -240,6 +280,10 @@ export default {
 </script>
 
 <style scoped>
+
+.swal-container-above{
+  z-index: 99999 !important;
+}
 .mb-4 {
   margin-bottom: 16px;
 }

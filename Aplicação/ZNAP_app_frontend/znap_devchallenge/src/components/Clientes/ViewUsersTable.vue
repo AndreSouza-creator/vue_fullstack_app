@@ -120,13 +120,30 @@ export default {
         if (response.status === 200) {
           this.udata.splice(this.editedIndex, 1);
           this.closeDelete();
-          Swal.fire("Cliente excluído com sucesso.");
+    
+          Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada
+            },
+            title: 'Cliente excluído com sucesso.'
+        });
         } else {
-          Swal.fire("Erro ao excluir o cliente.");
+
+          Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada
+            },
+            title: "Erro ao excluir o cliente."
+        });
         }
       } catch (error) {
         console.error("Erro na requisição de exclusão", error);
-        Swal.fire("Erro ao excluir o cliente.");
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada
+            },
+            title: "Erro ao excluir o cliente."
+        });
       }
     },
 
@@ -162,20 +179,46 @@ export default {
         if (response.status === 200) {
           if (this.editedIndex > -1) {
             Object.assign(this.udata[this.editedIndex], response.data); // Atualiza o item editado
-            Swal.fire("Usuário atualizado com sucesso.");
+            Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Usuário atualizado com sucesso."
+          });
           } else {
             this.udata.push(response.data); // Adiciona novo item
-            Swal.fire("Usuário adicionado com sucesso.");
+           
+            Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Usuário adicionado com sucesso."
+          });
           }
           this.close();
         } else {
-          Swal.fire("Erro ao salvar o cliente.");
+          Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao salvar o cliente."
+          });
         }
       } catch (error) {
         console.error("Erro na requisição de salvamento", error);
-        Swal.fire("Erro ao salvar o cliente.");
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao salvar o cliente."
+          });
       }
     }
   }
 };
 </script>
+<style scoped>
+.swal-container-above{
+  z-index: 99999 !important;
+}
+</style>

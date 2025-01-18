@@ -98,7 +98,12 @@ export default {
       try {
         const response = await apiURL.post('/addcustomer', user);
         console.log(response.data);
-        Swal.fire('Cliente criado com sucesso!');
+        Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada
+            },
+            title: 'Cliente criado com sucesso!'
+        });
       } catch (error) {
         console.error(error);
       }
@@ -108,6 +113,10 @@ export default {
 </script>
 
 <style scoped>
+
+.swal-container-above{
+  z-index: 99999 !important;
+}
 
 @media(min-width: 1000px){
   .containerAddForm {

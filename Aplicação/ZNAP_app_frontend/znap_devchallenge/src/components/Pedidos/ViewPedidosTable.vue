@@ -193,7 +193,12 @@ export default {
           this.pedidodata.splice(this.editedIndex, 1);
           this.closeDelete();
         } else {
-          Swal.fire("Erro ao excluir o pedido.");
+          Swal.fire({
+          customClass: {
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title: "Erro ao excluir o pedido."
+          });
         }
       } catch (error) {
         console.error("Erro na requisição de exclusão", error);
@@ -214,7 +219,13 @@ export default {
       try {
         // Validação dos campos obrigatórios
         if (!this.editedItem.descricao || !this.editedItem.data || !this.editedItem.id_cliente) {
-          Swal.fire("Erro", "Preencha todos os campos obrigatórios.", "error");
+          Swal.fire({
+          customClass: {
+          icon: 'error',
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title:  "Preencha todos os campos obrigatórios."
+          });
           return;
         }
 
@@ -239,13 +250,31 @@ export default {
             ...payload,
             nome_cliente: this.udata.find(u => u.id_cliente === this.editedItem.id_cliente)?.nome || ''
         });
-        Swal.fire("Sucesso", "Pedido atualizado com sucesso.", "success");
+        Swal.fire({
+          customClass: {
+          icon: 'success',
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title:  "Pedido atualizado com sucesso."
+          });
     } else {
-      Swal.fire("Sucesso", "Pedido atualizado com sucesso.", "success");
+      Swal.fire({
+      customClass: {
+      icon: 'success',
+      container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+        },
+        title:  "Pedido atualizado com sucesso."
+      });
         console.log("Atenção", "Pedido atualizado, mas mensagem inesperada da API.", "info");
     }
     } else {
-        Swal.fire("Erro", "Erro inesperado ao atualizar o pedido.", "error");
+        Swal.fire({
+          customClass: {
+          icon: 'error',
+          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            },
+            title:  "Erro inesperado ao atualizar o pedido."
+          });
     }
 
        this.close();
@@ -257,3 +286,9 @@ export default {
   }
 };
 </script>
+<style lang="css" scoped>
+.swal-container-above{
+  z-index: 99999 !important;
+}
+
+</style>
