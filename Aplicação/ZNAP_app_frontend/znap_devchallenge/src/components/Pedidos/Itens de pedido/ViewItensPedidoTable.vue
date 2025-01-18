@@ -142,19 +142,21 @@ export default {
   }),
   computed: {
     filteredPedidoItemData() {
+      console.log("selectedProduct:", this.selectedProduct);
+      console.log("localPedidoItemData:", this.localPedidoItemData);
       if (!this.selectedProduct && this.selectedProduct !== 0) {
         return this.localPedidoItemData; // Exibe todos os itens se não houver filtro
       }
       return this.localPedidoItemData.filter((item) => {
-        console.log("Comparando item.id_produto:", item.id_produto, "com selectedProduct:", this.selectedProduct);
-        return String(item.id_produto) === String(this.selectedProduct);
+        console.log("Comparando item.nome_produto:", item.nome_produto, "com selectedProduct:", this.selectedProduct);
+        return item.nome_produto && item.nome_produto.toLowerCase().includes(this.selectedProduct.toLowerCase());
       });
     }
   },
   mounted() {
-    // Gera as opções de produtos únicas com base nos itens disponíveis
+    // Opções de produtos únicas com base nos itens disponíveis
     this.productOptions = Array.from(
-      new Set(this.localPedidoItemData.map((item) => String(item.id_produto)))
+      new Set(this.localPedidoItemData.map((item) => item.nome_produto))
     );
     console.log("productOptions:", this.productOptions);
   },
@@ -194,15 +196,15 @@ export default {
           this.localPedidoItemData.splice(this.editedIndex, 1);
           this.closeDelete();
           Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            customClass: {
+              container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
             },
             title: "Item do pedido excluído com sucesso."
           });
         } else {
           Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+            customClass: {
+              container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
             },
             title: "Erro ao excluir o item do pedido."
           });
@@ -211,10 +213,10 @@ export default {
         console.error("Erro na requisição de exclusão", error);
         Swal.fire({
           customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Erro ao excluir o item do pedido."
-          });
+            container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+          },
+          title: "Erro ao excluir o item do pedido."
+        });
       }
     },
 
@@ -231,37 +233,36 @@ export default {
               this.editedItem
             );
             Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Item do pedido atualizado com sucesso."
-          });
+              customClass: {
+                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+              },
+              title: "Item do pedido atualizado com sucesso."
+            });
           } else {
-
             Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Erro ao atualizar o item do pedido."
-          });
+              customClass: {
+                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+              },
+              title: "Erro ao atualizar o item do pedido."
+            });
           }
         } else {
           response = await apiURL.post("/pedidos/addpedidoitem", payload);
           if (response.status === 200) {
             this.localPedidoItemData.push(response.data);
             Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Item do pedido adicionado com sucesso."
-          });
+              customClass: {
+                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+              },
+              title: "Item do pedido adicionado com sucesso."
+            });
           } else {
             Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Erro ao adicionar o item do pedido."
-          });
+              customClass: {
+                container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+              },
+              title: "Erro ao adicionar o item do pedido."
+            });
           }
         }
 
@@ -269,22 +270,12 @@ export default {
       } catch (error) {
         Swal.fire({
           customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
-            },
-            title: "Erro ao salvar o item do pedido."
-          });
+            container: 'swal-container-above' // Adicionando uma classe personalizada para o z-index
+          },
+          title: "Erro ao salvar o item do pedido."
+        });
       }
     }
   }
 };
 </script>
-
-<style scoped>
-
-.swal-container-above{
-  z-index: 99999 !important;
-}
-.mb-4 {
-  margin-bottom: 16px;
-}
-</style>

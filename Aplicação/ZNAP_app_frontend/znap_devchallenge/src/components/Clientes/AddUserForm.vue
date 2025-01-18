@@ -26,12 +26,11 @@
           ></v-text-field>
         </v-col>
         <v-col cols="12" md="6">
-        <v-btn :disabled="!valid" rounded color="secondary" @click="openConfirmModal">
-          Adicionar Usuário
-        </v-btn>
-      </v-col>
+          <v-btn :disabled="!valid" rounded color="secondary" @click="openConfirmModal">
+            Adicionar Usuário
+          </v-btn>
+        </v-col>
       </v-row>
-      
     </v-form>
 
     <!-- Modal de Confirmação -->
@@ -53,10 +52,8 @@
 </template>
 
 <script>
-import apiURL from "../../setups/axios.js"
+import apiURL from "../../setups/axios.js";
 import Swal from "sweetalert2";
-
-console.log("apiURL",apiURL);
 
 export default {
   data() {
@@ -68,15 +65,17 @@ export default {
         email: '',
       },
       users: [],
-      nextId: 1,
       rules: {
         required: (value) => !!value || 'Este campo é obrigatório.',
         email: (value) => {
-          const pattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
-          return pattern.test(value) || 'Insira um email válido.'
+          const pattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+          return pattern.test(value) || 'Insira um email válido.';
         },
       },
     };
+  },
+  mounted() {
+    this.fetchUsers(); // Carregar os usuários existentes
   },
   methods: {
     openConfirmModal() {
@@ -84,28 +83,46 @@ export default {
         this.confirmDialog = true;
       }
     },
-    saveUser() {
-      this.users.push({ ...this.newUser });
-      this.newUser.nome = '';
-      this.newUser.email = '';
-      this.$refs.form.reset();
-      this.confirmDialog = false;
-
-      // - ANDRESOUZA : Simulação de requisição
-      this.sendDataToServer(this.users[this.users.length - 1]);
-    },
-    async sendDataToServer(user) {
+    async saveUser() {
       try {
-        const response = await apiURL.post('/addcustomer', user);
-        console.log(response.data);
-        Swal.fire({
-          customClass: {
-          container: 'swal-container-above' // Adicionando uma classe personalizada
+        // Envia os dados do novo usuário para o servidor
+        const response = await apiURL.post('/addcustomer', this.newUser);
+
+        if (response.status === 200) {
+          // Se a criação for bem-sucedida, mostre o alerta
+          Swal.fire({
+            customClass: {
+              container: 'swal-container-above',
             },
-            title: 'Cliente criado com sucesso!'
-        });
+            title: 'Cliente criado com sucesso!',
+          });
+
+          // Limpa os campos do formulário
+          this.newUser.nome = '';
+          this.newUser.email = '';
+          this.$refs.form.reset();
+          this.confirmDialog = false;
+
+          // Atualiza a lista de usuários no frontend diretamente
+          // Aqui, suponha que a resposta contenha os dados do novo usuário
+          this.users.push(response.data);
+
+          // Recarregue os usuários, se necessário
+          // this.fetchUsers(); // Caso precise recarregar a lista
+        } else {
+          console.error("Erro na resposta do servidor", response);
+        }
       } catch (error) {
-        console.error(error);
+        console.error("Erro ao salvar usuário", error);
+      }
+    },
+    async fetchUsers() {
+      try {
+        // Carregar a lista de usuários do servidor
+        const response = await apiURL.get('/getcustomers');
+        this.users = response.data;
+      } catch (error) {
+        console.error("Erro ao carregar os usuários", error);
       }
     },
   },
@@ -113,20 +130,17 @@ export default {
 </script>
 
 <style scoped>
-
-.swal-container-above{
+.swal-container-above {
   z-index: 99999 !important;
 }
 
-@media(min-width: 1000px){
+@media(min-width: 1000px) {
   .containerAddForm {
     width: 50%;
     margin-left: 0px;
-
     padding: 0px;
     display: flex;
     flex-direction: column;
-}
-
+  }
 }
 </style>

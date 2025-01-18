@@ -41,26 +41,36 @@ export const updateUser = (req, res) => {
 };
 
 
-  export const deleteUser = (req, res) => {
-    const idCliente = req.params.id;
+export const deleteUser = (req, res) => {
+  const idCliente = req.params.id;
+
+  // Exclui os itens relacionados no pedido (pedidoitens)
+  const deletePedidoItensQuery = "DELETE FROM pedidoitens WHERE id_pedido IN (SELECT id_pedido FROM pedidos WHERE id_cliente = ?)";
   
-    // - ANDRESOUZA : Exclui os pedidos relacionados ao cliente
+  db.query(deletePedidoItensQuery, [idCliente], (err) => {
+    if (err) {
+      return res.status(500).json({ message: "Erro ao excluir itens de pedido.", error: err });
+    }
+
+    // Exclui os pedidos relacionados ao cliente
     const deletePedidosQuery = "DELETE FROM pedidos WHERE id_cliente = ?";
-    
-    db.query(deletePedidosQuery, [idCliente], (err, result) => {
+    db.query(deletePedidosQuery, [idCliente], (err) => {
       if (err) {
         return res.status(500).json({ message: "Erro ao excluir pedidos.", error: err });
       }
-  
-      // - ANDRESOUZA : Em seguida o cliente
+
+      // Exclui o cliente
       const deleteUserQuery = "DELETE FROM clientes WHERE `id_cliente` = ?";
-      
       db.query(deleteUserQuery, [idCliente], (err) => {
-        if (err) return res.status(500).json({ message: "Erro ao excluir o usuário.", error: err });
-  
-        return res.status(200).json("Usuário e pedidos deletados com sucesso.");
+        if (err) {
+          return res.status(500).json({ message: "Erro ao excluir o usuário.", error: err });
+        }
+
+        return res.status(200).json("Usuário, pedidos e itens deletados com sucesso.");
       });
     });
-  };
+  });
+};
+
   
   

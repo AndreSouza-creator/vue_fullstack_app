@@ -5,6 +5,7 @@
       <img id="navlogo" src="../assets/imgs/znaplogo.webp">
     </v-app-bar-nav-icon>
   </template>
+
   </v-app-bar>
   <v-container>
     <h1>Olá, bem vindo!</h1> 
@@ -26,6 +27,7 @@
       color: white;
       height: 60px;
       display: flex;
+      
      }
 
      #navlogo{
@@ -34,7 +36,11 @@
       margin-left: 100%;
      }
 
-     .v-row {
+     #navbartitle{
+       margin-left: 50%;
+     }
+
+    .v-row {
     flex-basis: 0;
     flex-grow: 1;
     min-width: 100%;
